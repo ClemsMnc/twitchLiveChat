@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitch chat</title>
+    <script src="https://cdn.jsdelivr.net/npm/comfy.js@latest/dist/comfy.min.js"></script>
+    <style>
+        html, body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: transparent;
+            color: #fff;
+        }
+
+        #chat {
+            width: 400px;
+            height: 350px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column-reverse;
+            background-color: transparent;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+        }
+
+        #chat::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        #chat::-webkit-scrollbar-thumb {
+            background-color: transparent;
+            border-radius: 5px;
+        }
+
+        #chat ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #chat li {
+            background-color: #202225;
+            border-radius: 15px;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            border-left: 4px solid #4caf50;
+            opacity: 0.85;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        #chat li div {
+            margin-bottom: 5px; /* Espacement entre pseudo et message */
+        }
+
+        #chat li blockquote {
+            font-size: 0.9rem;
+            margin: 0;
+            color: #ddd;
+            margin-left: 20px; /* Décalage du message vers la droite */
+        }
+
+        #chat li:hover {
+            opacity: 1;
+        }
+
+        #chat li:not(:last-of-type) {
+            animation: slide-in 0.5s ease-out forwards;
+        }
+
+        @keyframes slide-in {
+            0% {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0);
+                opacity: 0.85;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="chat">
+        <ul>
+            <!-- Les messages du chat Twitch apparaîtront ici sous forme d'éléments <li> -->
+        </ul>
+    </div>
+
+    <script>
+        var chat = document.querySelector("#chat > ul");
+
+        ComfyJS.onChat = (user, message, flags, self, extra) => {
+            var newMessage = document.createElement("li");
+            var userName = document.createElement("div"); // Création d'un élément pour le pseudo
+            var textMessage = document.createElement("blockquote"); // Création d'un élément pour le message
+
+            userName.innerText = user + " :";
+            textMessage.innerText = message;
+
+            // Ajout du pseudo et du message au nouvel élément de message
+            newMessage.appendChild(userName);
+            newMessage.appendChild(textMessage);
+
+            chat.appendChild(newMessage);
+        }
+        ComfyJS.Init("Mokutaz");
+    </script>
+</body>
+</html>
