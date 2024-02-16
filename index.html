@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,7 +8,8 @@
     <title>Twitch chat</title>
     <script src="https://cdn.jsdelivr.net/npm/comfy.js@latest/dist/comfy.min.js"></script>
     <style>
-        html, body {
+        html,
+        body {
             margin: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: transparent;
@@ -41,33 +43,41 @@
         }
 
         #chat li {
-            background-color: #202225;
+            background-color: rgba(32, 34, 37, 0.85);
             border-radius: 15px;
-            padding: 10px;
+            padding: 15px;
             margin-bottom: 10px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             border-left: 4px solid #4caf50;
-            opacity: 0.85;
-            transition: opacity 0.3s ease-in-out;
-        }
-
-        #chat li div {
-            margin-bottom: 5px; /* Espacement entre pseudo et message */
+            transition: background-color 0.3s ease-in-out;
         }
 
         #chat li blockquote {
-            font-size: 0.9rem;
             margin: 0;
-            color: #ddd;
-            margin-left: 20px; /* Décalage du message vers la droite */
+            margin-left: 15px;
+            padding: 5px;
+        }
+
+        #chat li div,
+        #chat li span,
+        #chat li blockquote,
+        .badge-img {
+            opacity: 1;
         }
 
         #chat li:hover {
             opacity: 1;
         }
 
-        #chat li:not(:last-of-type) {
-            animation: slide-in 0.5s ease-out forwards;
+        #chat li:not(:first-of-type) {
+            animation: slide-in 0.5s ease-in-out backwards;
+        }
+
+        .badge-img {
+            height: 15px;
+            width: 15px;
+            margin-right: 7px;
+            vertical-align: middle;
         }
 
         @keyframes slide-in {
@@ -75,17 +85,18 @@
                 transform: translateX(-20px);
                 opacity: 0;
             }
+
             100% {
                 transform: translateX(0);
-                opacity: 0.85;
+                opacity: 1;
             }
         }
     </style>
 </head>
+
 <body>
     <div id="chat">
         <ul>
-            <!-- Les messages du chat Twitch apparaîtront ici sous forme d'éléments <li> -->
         </ul>
     </div>
 
@@ -94,19 +105,42 @@
 
         ComfyJS.onChat = (user, message, flags, self, extra) => {
             var newMessage = document.createElement("li");
-            var userName = document.createElement("div"); // Création d'un élément pour le pseudo
-            var textMessage = document.createElement("blockquote"); // Création d'un élément pour le message
+            var userContent = document.createElement("div");
+            var userName = document.createElement("span");
+            var textMessage = document.createElement("blockquote");
+
+            if (extra.userColor) {
+                userName.style.color = extra.userColor;
+            } else {
+                userName.style.color = "#FFFFFF";
+            }
 
             userName.innerText = user + " :";
-            textMessage.innerText = message;
 
-            // Ajout du pseudo et du message au nouvel élément de message
-            newMessage.appendChild(userName);
+            const availables_badges = ['premium', 'vip', 'partner', 'moderator', 'broadcaster', 'admin'];
+
+            if (extra.userBadges) {
+                for (var badge in extra.userBadges) {
+                    if (availables_badges.includes(badge)) {
+                        var badgeImg = document.createElement("img");
+                        badgeImg.src = `/Images/${badge}.png`;
+                        badgeImg.alt = badge;
+                        badgeImg.classList.add("badge-img");
+                        userContent.appendChild(badgeImg);
+                    }
+                }
+            }
+
+            userContent.appendChild(userName);
+            newMessage.appendChild(userContent);
+            textMessage.innerText = message;
             newMessage.appendChild(textMessage);
 
             chat.appendChild(newMessage);
         }
         ComfyJS.Init("Mokutaz");
     </script>
+
 </body>
+
 </html>
