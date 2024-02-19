@@ -18,13 +18,11 @@
 
         #chat {
             width: 400px;
-            height: 350px;
+            height: 700px;
             overflow-y: auto;
             display: flex;
             flex-direction: column-reverse;
             background-color: transparent;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             padding: 10px;
         }
 
@@ -56,7 +54,13 @@
             margin: 0;
             margin-left: 15px;
             padding: 5px;
+            word-wrap: break-word;
         }
+
+        #chat li span {
+            font-weight: bold;
+        }
+
 
         #chat li div,
         #chat li span,
@@ -91,6 +95,20 @@
                 opacity: 1;
             }
         }
+
+        @keyframes fade-out {
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+        .fade-out {
+            animation: fade-out 1s forwards;
+        }
     </style>
 </head>
 
@@ -105,6 +123,9 @@
 
         ComfyJS.onChat = (user, message, flags, self, extra) => {
             var newMessage = document.createElement("li");
+            var messageId = "message-" + Date.now();
+            newMessage.id = messageId;
+
             var userContent = document.createElement("div");
             var userName = document.createElement("span");
             var textMessage = document.createElement("blockquote");
@@ -137,10 +158,16 @@
             newMessage.appendChild(textMessage);
 
             chat.appendChild(newMessage);
-        }
+
+            setTimeout(() => {
+                var messageToRemove = document.getElementById(messageId);
+                if (messageToRemove) {
+                    messageToRemove.classList.add("fade-out");
+                    setTimeout(() => messageToRemove.remove(), 1000);
+                }
+            }, 30000);
+        };
         ComfyJS.Init("Mokutaz");
     </script>
-
 </body>
-
 </html>
